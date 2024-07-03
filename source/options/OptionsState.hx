@@ -7,6 +7,7 @@ import flash.text.TextField;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxGridOverlay;
+import flixel.animation.FlxAnimationController;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.math.FlxMath;
 import flixel.text.FlxText;
@@ -21,6 +22,7 @@ import haxe.Json;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxTimer;
+import flixel.ui.FlxButton;
 import flixel.input.keyboard.FlxKey;
 import flixel.graphics.FlxGraphic;
 import Controls;
@@ -29,84 +31,172 @@ using StringTools;
 
 class OptionsState extends MusicBeatState
 {
-	var options:Array<String> = ['Note Colors', 'Controls', 'Adjust Delay and Combo', 'Graphics', 'Visuals and UI', 'Gameplay', 'Mobile Options'];
-	private var grpOptions:FlxTypedGroup<Alphabet>;
 	private static var curSelected:Int = 0;
-	public static var menuBG:FlxSprite;
 
-	function openSelectedSubstate(label:String) {
-		if (label != "Adjust Delay and Combo"){
-			removeVirtualPad();
-			persistentUpdate = false;
-		}
-		switch(label) {
-			case 'Note Colors':
-				openSubState(new options.NotesSubState());
-			case 'Controls':
-				openSubState(new options.ControlsSubState());
-			case 'Graphics':
-				openSubState(new options.GraphicsSettingsSubState());
-			case 'Visuals and UI':
-				openSubState(new options.VisualsUISubState());
-			case 'Gameplay':
-				openSubState(new options.GameplaySettingsSubState());
-			case 'Adjust Delay and Combo':
-				LoadingState.loadAndSwitchState(new options.NoteOffsetState());
-			case 'Mobile Options':
-				openSubState(new mobile.options.MobileOptionsSubState());
-		}
-	}
+	// Bgs
+	var bg:FlxSprite;
+	var darkenBG:FlxSprite;
+	
+	var menuList:Array<String> = ['Notecolors', 'Controls', 'Notedelay', 'Graphics', 'Visuals', 'Gameplay', 'Mobile Controls'];
 
-	var selectorLeft:Alphabet;
-	var selectorRight:Alphabet;
+	// Filepath shortcut
+	var spritePath:String = 'menus/optionsMenu/';
+
+	// UI Button stuff
+	var btnGroup:FlxTypedGroup<FlxButton>;
+	var btnGroups:Array<FlxTypedGroup<FlxButton>> = [];
+
+	// Button properties 
+	// DO NOT CHANGE THESE VARIABLES THEY'RE HANDLED IN A FUNCTION LATER ON.
+	var btnWidth:Int = 0; // Width of each button.
+	var btnHeight:Int = 0; // Height of each button.
+	var btnX:Int = 0; // X position of the button row.
+	var btnY:Int = 0; // Y position of the button row.
+	var btnSpacing:Int = 0; // Space between each button.
+
+	// Bullshit position work around for frames.
+	var highlightedFrames:Array<FlxSprite> = [];
+	var pressedFrames:Array<FlxSprite> = [];
 
 	override function create() {
 		#if desktop
 		DiscordClient.changePresence("Options Menu", null);
 		#end
 
-		var bg:FlxSprite = new FlxSprite().loadGraphic(Paths.image('menuDesat'));
-		bg.color = 0xFFea71fd;
+		bg = new FlxSprite().loadGraphic(Paths.image('menus/bg'));
 		bg.updateHitbox();
 		bg.screenCenter();
 		bg.antialiasing = ClientPrefs.globalAntialiasing;
 		add(bg);
 
 		var tipText:FlxText = new FlxText(150, FlxG.height - 24, 0, 'Press C to Go Mobile Controls Menu', 16);
-		tipText.setFormat("VCR OSD Mono", 17, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+		tipText.setFormat("stalker2.ttf", 17, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		tipText.borderSize = 1.25;
 		tipText.scrollFactor.set();
 		tipText.antialiasing = ClientPrefs.globalAntialiasing;
 		add(tipText);
 
-		grpOptions = new FlxTypedGroup<Alphabet>();
-		add(grpOptions);
+		/* Call our separated function for creating menu buttons */
+		btnGroups.push(createGroup(menuList));
 
-		for (i in 0...options.length)
-		{
-			var optionText:Alphabet = new Alphabet(0, 0, options[i], true);
-			optionText.screenCenter();
-			optionText.y += (100 * (i - (options.length / 2))) + 50;
-			grpOptions.add(optionText);
-		}
-
-		selectorLeft = new Alphabet(0, 0, '>', true);
-		add(selectorLeft);
-		selectorRight = new Alphabet(0, 0, '<', true);
-		add(selectorRight);
-
-		changeSelection();
 		ClientPrefs.saveSettings();
 
-		addVirtualPad(UP_DOWN, A_B_C);
+		addVirtualPad(NONE, B_C);
 
 		super.create();
+	}
+
+	
+	public function createGroup(menuList:Array<String>):FlxTypedGroup<FlxButton> 
+	{
+		// Initialize group.
+		btnGroup = new FlxTypedGroup<FlxButton>();
+	
+		for (i in 0...menuList.length) {
+			btnWidth = FlxG.width; // Set the button width to the game width, to prevent a really dumb bug I have no clue how to properly fix.
+			btnHeight = 55;
+			btnSpacing = 24;
+			btnX = 69; // haha funny number.
+			btnY = 100 + (btnHeight + btnSpacing) * i;
+	
+			// Automatically create the appropiate amount of buttons.
+			var button = createButton(btnX, btnY, i, menuList);
+			btnGroup.add(button);
+		}
+		add(btnGroup);
+	
+		return btnGroup;
+	}
+
+	function createButton(btnX:Int, btnY:Int, index:Int, menuList:Array<String>):FlxButton
+	{
+		// Button creation.
+		var button = new FlxButton(btnX, btnY, "", onButtonClicked.bind(index, menuList));
+
+		// Load a sprite sharing the name of the menu.
+		button.loadGraphic(Paths.image(spritePath + menuList[index].toLowerCase()));
+		button.frames = Paths.getSparrowAtlas(spritePath + menuList[index].toLowerCase());
+		button.animation.addByPrefix('idle', menuList[index] + ' idle', 24, true);
+		button.animation.addByPrefix('highlighted', menuList[index] + ' highlighted', 24, true);
+		button.animation.addByPrefix('pressed', menuList[index] + ' pressed', 24, true);
+
+		button.width = btnWidth;
+		button.height = btnHeight;
+
+		// Assign button events to functions.
+		button.onOver.callback = onButtonHighlight.bind(index, menuList);
+		button.onOut.callback = onButtonDeselect.bind(index, menuList); 
+
+		button.animation.play('idle');
+
+		/* 	
+			The onDown and onUp event triggers even when you hold your mouse button down and hover over/hover out of the button. 
+			Setting allowSwiping to false will prevent this.
+		*/
+		button.allowSwiping = false;
+		
+		return button;
+	}
+
+	function onButtonClicked(index:Int, menuList:Array<String>) 
+	{
+		// Set the current selection to the index of the clicked button.
+		curSelected = index;
+
+		var button = btnGroup.members[curSelected];
+		button.animation.play('pressed');
+
+		// Play a sound when the button is clicked.
+		FlxG.sound.play(Paths.sound('done'), 1);
+		
+		switch(index) {
+			case 0: //'Notecolors':
+				openSubState(new options.NotesSubState());
+			case 1: //'Controls':
+				openSubState(new options.ControlsSubState());
+			case 2: //'Notedelay':
+				LoadingState.loadAndSwitchState(new options.NoteOffsetState());
+			case 3: //'Visuals':
+				openSubState(new options.VisualsUISubState());
+			case 4: //'Gameplay':
+				openSubState(new options.GameplaySettingsSubState());
+			case 5: //'Graphics':
+				openSubState(new options.GraphicsSettingsSubState());
+			case 6: //'Mobile Options':
+				openSubState(new mobile.options.MobileOptionsSubState());
+		}
+		button.x = 69;
+		button.y = button.y + 1;
+	}
+
+
+	function onButtonHighlight(index:Int, menuList:Array<String>)
+	{
+		curSelected = index;
+
+		var button = btnGroup.members[curSelected];
+		button.x = 4;
+		button.y = button.y - 1; // No, using -= doesn't work here due to how dumb the FlxButton events are handled.
+		button.animation.play('highlighted');
+	}
+
+	function onButtonDeselect(index:Int, menuList:Array<String>) 
+	{
+		curSelected = index;
+
+		var button = btnGroup.members[curSelected];
+		button.x = 69;
+		button.y = button.y + 1;
+		button.animation.play('idle');
+
+		index = -1;
+		curSelected = index;
 	}
 
 	override function closeSubState() {
 		super.closeSubState();
 		removeVirtualPad();
-		addVirtualPad(UP_DOWN, A_B_C);
+		addVirtualPad(NONE, B_C);
 		persistentUpdate = true;
 		ClientPrefs.saveSettings();
 	}
@@ -114,51 +204,15 @@ class OptionsState extends MusicBeatState
 	override function update(elapsed:Float) {
 		super.update(elapsed);
 
-		if (controls.UI_UP_P) {
-			changeSelection(-1);
-		}
-		if (controls.UI_DOWN_P) {
-			changeSelection(1);
-		}
-
 		if (controls.BACK) {
 			persistentUpdate = false;
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 			MusicBeatState.switchState(new MainMenuState());
 		}
 
-		if (controls.ACCEPT) {
-			openSelectedSubstate(options[curSelected]);
-		}
-
 		if (virtualPad.buttonC.justPressed) {
 			persistentUpdate = false;
 			openSubState(new mobile.MobileControlsSelectSubState());
 		}
-	}
-	
-	function changeSelection(change:Int = 0) {
-		curSelected += change;
-		if (curSelected < 0)
-			curSelected = options.length - 1;
-		if (curSelected >= options.length)
-			curSelected = 0;
-
-		var bullShit:Int = 0;
-
-		for (item in grpOptions.members) {
-			item.targetY = bullShit - curSelected;
-			bullShit++;
-
-			item.alpha = 0.6;
-			if (item.targetY == 0) {
-				item.alpha = 1;
-				selectorLeft.x = item.x - 63;
-				selectorLeft.y = item.y;
-				selectorRight.x = item.x + item.width + 15;
-				selectorRight.y = item.y;
-			}
-		}
-		FlxG.sound.play(Paths.sound('scrollMenu'));
 	}
 }
