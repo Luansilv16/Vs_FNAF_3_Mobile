@@ -31,11 +31,25 @@ class PauseSubState extends MusicBeatSubstate
 	var curTime:Float = Math.max(0, Conductor.songPosition);
 	//var botplayText:FlxText;
 
+	public static var curSong:String = '';
+
 	public static var songName:String = '';
+
+	var spritePath:String = 'menus/pauseMenu/';
+	var pauseMenuChar:FlxSprite;
 
 	public function new(x:Float, y:Float)
 	{
 		super();
+
+		var bg = new FlxSprite().loadGraphic(Paths.image(spritePath + 'bg'));
+		bg.frames = Paths.getSparrowAtlas(spritePath + 'bg');
+		bg.animation.addByPrefix('anim', 'idle', 24, true);
+		bg.antialiasing = ClientPrefs.globalAntialiasing;
+                bg.screenCenter();
+		bg.animation.play('anim');
+                add(bg);
+		
 		if(CoolUtil.difficulties.length < 2) menuItemsOG.remove('Change Difficulty'); //No need to change difficulty if there is only one!
 
 		if(PlayState.chartingMode)
@@ -78,30 +92,120 @@ class PauseSubState extends MusicBeatSubstate
 		bg.scrollFactor.set();
 		add(bg);
 
+		curSong = PlayState.SONG.song;
+		var formattedSongName = curSong.split(' ').join('-').toLowerCase();
+		var tweenOffset:Float = 3000;
+		switch (formattedSongName)
+		{
+			case 'taken-apart':
+				pauseMenuChar = new FlxSprite(tweenOffset + 0, 0);
+				pauseMenuChar.loadGraphic(Paths.image(spritePath + 'songs/' + formattedSongName));
+				pauseMenuChar.antialiasing = ClientPrefs.globalAntialiasing;
+				add(pauseMenuChar);
+
+			case 'retribution':
+				pauseMenuChar = new FlxSprite(tweenOffset + 0, 0);
+				pauseMenuChar.loadGraphic(Paths.image(spritePath + 'songs/' + formattedSongName));
+				pauseMenuChar.antialiasing = ClientPrefs.globalAntialiasing;
+				add(pauseMenuChar);
+
+			case 'fear-forever':
+				pauseMenuChar = new FlxSprite(tweenOffset + 0, 0);
+				pauseMenuChar.loadGraphic(Paths.image(spritePath + 'songs/' + formattedSongName));
+				pauseMenuChar.antialiasing = ClientPrefs.globalAntialiasing;
+				add(pauseMenuChar);
+
+			case 'everlasting':
+				pauseMenuChar = new FlxSprite(tweenOffset + 0, 0);
+				pauseMenuChar.loadGraphic(Paths.image(spritePath + 'songs/' + formattedSongName));
+				pauseMenuChar.antialiasing = ClientPrefs.globalAntialiasing;
+				add(pauseMenuChar);
+
+			case 'brain-damage':
+				pauseMenuChar = new FlxSprite(tweenOffset + 0, 0);
+				pauseMenuChar.loadGraphic(Paths.image(spritePath + 'songs/' + formattedSongName));
+				pauseMenuChar.antialiasing = ClientPrefs.globalAntialiasing;
+				add(pauseMenuChar);
+
+			case 'party-room':
+				pauseMenuChar = new FlxSprite(tweenOffset + 0, 0);
+				pauseMenuChar.loadGraphic(Paths.image(spritePath + 'songs/' + formattedSongName));
+				pauseMenuChar.antialiasing = ClientPrefs.globalAntialiasing;
+				add(pauseMenuChar);
+
+			case 'totally-real':
+				pauseMenuChar = new FlxSprite(tweenOffset + 0, 0);
+				pauseMenuChar.loadGraphic(Paths.image(spritePath + 'songs/' + formattedSongName));
+				pauseMenuChar.antialiasing = ClientPrefs.globalAntialiasing;
+				add(pauseMenuChar);
+
+			case 'last-hour':
+				pauseMenuChar = new FlxSprite(tweenOffset + 0, 0);
+				pauseMenuChar.loadGraphic(Paths.image(spritePath + 'songs/' + formattedSongName));
+				pauseMenuChar.antialiasing = ClientPrefs.globalAntialiasing;
+				add(pauseMenuChar);
+
+			case 'waffles':
+				pauseMenuChar = new FlxSprite(tweenOffset + 0, 0);
+				pauseMenuChar.loadGraphic(Paths.image(spritePath + 'songs/' + formattedSongName));
+				pauseMenuChar.antialiasing = ClientPrefs.globalAntialiasing;
+				add(pauseMenuChar);
+
+			case 'leantrap':
+				pauseMenuChar = new FlxSprite(tweenOffset + 0, 0);
+				pauseMenuChar.loadGraphic(Paths.image(spritePath + 'songs/' + formattedSongName));
+				pauseMenuChar.antialiasing = ClientPrefs.globalAntialiasing;
+				add(pauseMenuChar);
+
+			case 'endo-revengo':
+				pauseMenuChar = new FlxSprite(tweenOffset + 0, 0);
+				pauseMenuChar.loadGraphic(Paths.image(spritePath + 'songs/' + formattedSongName));
+				pauseMenuChar.antialiasing = ClientPrefs.globalAntialiasing;
+				add(pauseMenuChar);
+
+			case 'misconception':
+				pauseMenuChar = new FlxSprite(tweenOffset + 0, 0);
+				pauseMenuChar.loadGraphic(Paths.image(spritePath + 'songs/' + formattedSongName));
+				pauseMenuChar.antialiasing = ClientPrefs.globalAntialiasing;
+				add(pauseMenuChar);
+
+			case 'out-of-bounds':
+				pauseMenuChar = new FlxSprite(tweenOffset + 0, 0);
+				pauseMenuChar.loadGraphic(Paths.image(spritePath + 'songs/' + formattedSongName));
+				pauseMenuChar.antialiasing = ClientPrefs.globalAntialiasing;
+				add(pauseMenuChar);
+
+			case 'until-next-time':
+				pauseMenuChar = new FlxSprite(tweenOffset + 0, 0);
+				pauseMenuChar.loadGraphic(Paths.image(spritePath + 'songs/' + formattedSongName));
+				pauseMenuChar.antialiasing = ClientPrefs.globalAntialiasing;
+				add(pauseMenuChar);
+		}
+
 		var levelInfo:FlxText = new FlxText(20, 15, 0, "", 32);
 		levelInfo.text += PlayState.SONG.song;
 		levelInfo.scrollFactor.set();
-		levelInfo.setFormat(Paths.font("vcr.ttf"), 32);
+		levelInfo.setFormat(Paths.font("stalker2.ttf"), 32);
 		levelInfo.updateHitbox();
 		add(levelInfo);
 
 		var levelDifficulty:FlxText = new FlxText(20, 15 + 32, 0, "", 32);
 		levelDifficulty.text += CoolUtil.difficultyString();
 		levelDifficulty.scrollFactor.set();
-		levelDifficulty.setFormat(Paths.font('vcr.ttf'), 32);
+		levelDifficulty.setFormat(Paths.font('stalker2.ttf'), 32);
 		levelDifficulty.updateHitbox();
 		add(levelDifficulty);
 
 		var blueballedTxt:FlxText = new FlxText(20, 15 + 64, 0, "", 32);
 		blueballedTxt.text = "Blueballed: " + PlayState.deathCounter;
 		blueballedTxt.scrollFactor.set();
-		blueballedTxt.setFormat(Paths.font('vcr.ttf'), 32);
+		blueballedTxt.setFormat(Paths.font('stalker2.ttf'), 32);
 		blueballedTxt.updateHitbox();
 		add(blueballedTxt);
 
 		practiceText = new FlxText(20, 15 + 101, 0, "PRACTICE MODE", 32);
 		practiceText.scrollFactor.set();
-		practiceText.setFormat(Paths.font('vcr.ttf'), 32);
+		practiceText.setFormat(Paths.font('stalker2.ttf'), 32);
 		practiceText.x = FlxG.width - (practiceText.width + 20);
 		practiceText.updateHitbox();
 		practiceText.visible = PlayState.instance.practiceMode;
@@ -109,7 +213,7 @@ class PauseSubState extends MusicBeatSubstate
 
 		var chartingText:FlxText = new FlxText(20, 15 + 101, 0, "CHARTING MODE", 32);
 		chartingText.scrollFactor.set();
-		chartingText.setFormat(Paths.font('vcr.ttf'), 32);
+		chartingText.setFormat(Paths.font('stalker2.ttf'), 32);
 		chartingText.x = FlxG.width - (chartingText.width + 20);
 		chartingText.y = FlxG.height - (chartingText.height + 20);
 		chartingText.updateHitbox();
@@ -128,6 +232,7 @@ class PauseSubState extends MusicBeatSubstate
 		FlxTween.tween(levelInfo, {alpha: 1, y: 20}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.3});
 		FlxTween.tween(levelDifficulty, {alpha: 1, y: levelDifficulty.y + 5}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.5});
 		FlxTween.tween(blueballedTxt, {alpha: 1, y: blueballedTxt.y + 5}, 0.4, {ease: FlxEase.quartInOut, startDelay: 0.7});
+		FlxTween.tween(pauseMenuChar, {alpha: 1, x: pauseMenuChar.x - tweenOffset}, 1, {ease: FlxEase.quartInOut});
 
 		grpMenuShit = new FlxTypedGroup<Alphabet>();
 		add(grpMenuShit);
@@ -363,7 +468,7 @@ class PauseSubState extends MusicBeatSubstate
 			if(menuItems[i] == 'Skip Time')
 			{
 				skipTimeText = new FlxText(0, 0, 0, '', 64);
-				skipTimeText.setFormat(Paths.font("vcr.ttf"), 64, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
+				skipTimeText.setFormat(Paths.font("stalker2.ttf"), 64, FlxColor.WHITE, CENTER, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 				skipTimeText.scrollFactor.set();
 				skipTimeText.borderSize = 2;
 				skipTimeTracker = item;
