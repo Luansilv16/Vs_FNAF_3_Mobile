@@ -37,7 +37,7 @@ class OptionsState extends MusicBeatState
 	var bg:FlxSprite;
 	var darkenBG:FlxSprite;
 	
-	var menuList:Array<String> = ['Notecolors', 'Controls', 'Notedelay', 'Graphics', 'Visuals', 'Gameplay', 'Mobile Controls'];
+	var menuList:Array<String> = ['Notecolors', 'Controls', 'Notedelay', 'Graphics', 'Visuals', 'Gameplay', 'Accessibility'];
 
 	// Filepath shortcut
 	var spritePath:String = 'menus/optionsMenu/';
@@ -156,12 +156,12 @@ class OptionsState extends MusicBeatState
 				openSubState(new options.ControlsSubState());
 			case 2: //'Notedelay':
 				LoadingState.loadAndSwitchState(new options.NoteOffsetState());
-			case 3: //'Visuals':
-				openSubState(new options.VisualsUISubState());
-			case 4: //'Gameplay':
-				openSubState(new options.GameplaySettingsSubState());
-			case 5: //'Graphics':
+			case 3: //'Graphics':
 				openSubState(new options.GraphicsSettingsSubState());
+			case 4: //'Visuals':
+				openSubState(new options.VisualsUISubState());
+			case 5: //'Gameplay':
+				openSubState(new options.GameplaySettingsSubState());
 			case 6: //'Mobile Options':
 				openSubState(new mobile.options.MobileOptionsSubState());
 		}
