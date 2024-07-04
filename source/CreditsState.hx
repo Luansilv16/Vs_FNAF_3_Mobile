@@ -24,7 +24,7 @@ import lime.utils.Assets;
 
 using StringTools;
 
-class CreditsState extends FlxState
+class CreditsState extends MusicBeatState
 {
         var background:FlxSprite;
 
