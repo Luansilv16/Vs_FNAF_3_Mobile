@@ -80,6 +80,7 @@ class CreditsState extends MusicBeatState
 
 		buttons.push(button);
 	}
+   }
 
 	function onButtonClicked(index:Int)
         {
