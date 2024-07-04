@@ -233,8 +233,8 @@ class StoryMenuState extends MusicBeatState
 	{
 		persistentUpdate = false;
 
-		if (curDifficulty != 0) {
-			curDifficulty = 0;
+		if (curDifficulty != 1) {
+			curDifficulty = 1;
 		}
 	}
 	
@@ -242,8 +242,8 @@ class StoryMenuState extends MusicBeatState
 	{
 		persistentUpdate = false;
 
-		if (curDifficulty != 1) {
-			curDifficulty = 1;
+		if (curDifficulty != 0) {
+			curDifficulty = 0;
 		}
 	}
 
