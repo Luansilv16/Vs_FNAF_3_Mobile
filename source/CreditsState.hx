@@ -27,7 +27,6 @@ using StringTools;
 class CreditsState extends FlxState
 {
         var background:FlxSprite;
-        var debugKeys:Array<FlxKey>;
 
         var sprites:Array<FlxSprite> = [];
         var buttons:Array<FlxButton> = [];
