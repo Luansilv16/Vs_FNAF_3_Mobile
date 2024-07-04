@@ -23,10 +23,9 @@ import lime.utils.Assets;
 
 using StringTools;
 
-class CreditsState extends MusicBeatState
+class CreditsState extends FlxState
 {
         var background:FlxSprite;
-        private var camGame:FlxCamera;
         var debugKeys:Array<FlxKey>;
 
         var sprites:Array<FlxSprite> = [];
