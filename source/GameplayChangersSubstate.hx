@@ -37,14 +37,6 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 	private var checkboxGroup:FlxTypedGroup<CheckboxThingie>;
 	private var grpTexts:FlxTypedGroup<AttachedText>;
 
-	private var modifierTablet:FlxSprite;
-	private var optionText:FlxText;
-	private var boolText:FlxText;
-	private var valueText:FlxText;
-
-	// Filepath shortcuts
-	private var spritePath:String = 'menus/freeplayMenu/';
-
 	function getOptions()
 	{
 		var goption:GameplayOption = new GameplayOption('Scroll Type', 'scrolltype', 'string', 'multiplicative', ["multiplicative", "constant"]);
@@ -119,22 +111,10 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 	{
 		super();
 		
-		modifierTablet = new FlxSprite();
-		modifierTablet.loadGraphic(Paths.image(spritePath + 'tablet_options'));
-		modifierTablet.frames = Paths.getSparrowAtlas(spritePath + 'tablet_options');
-		modifierTablet.antialiasing = ClientPrefs.globalAntialiasing;
-		modifierTablet.x = 0;
-		modifierTablet.y = 340;
-		modifierTablet.scale.x = 0.7;
-		modifierTablet.scale.y = 0.7;
-		modifierTablet.updateHitbox();
-		modifierTablet.animation.addByPrefix('Anim In', 'Anim In', 48, false);
-		modifierTablet.animation.addByPrefix('Anim Out', 'Anim Out', 48, false);
-		modifierTablet.animation.addByPrefix('Anim Opened', 'Anim Opened', 48, true);
-		modifierTablet.animation.play('Anim In');
-		modifierTablet.alpha = 1;
-		add(modifierTablet);
-		
+		var bg:FlxSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
+		bg.alpha = 0.6;
+		add(bg);
+
 		// avoids lagspikes while scrolling through menus!
 		grpOptions = new FlxTypedGroup<Alphabet>();
 		add(grpOptions);
@@ -149,33 +129,33 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 
 		for (i in 0...optionsArray.length)
 		{
-                        optionText = new FlxText(32, modifierTablet.y + 36 + yOffset, 0, optionsArray[i].name, 16, true);
-			optionText.setFormat(Paths.font('stalker1.ttf'), 32, FlxColor.WHITE, FlxTextBorderStyle.OUTLINE, FlxColor.GREEN, true);
-			optionText.borderSize = 2;
-			optionText.visible = false; // Hide the optionText initially
+			var optionText:Alphabet = new Alphabet(200, 360, optionsArray[i].name, true);
+			optionText.isMenuItem = true;
+			optionText.scaleX = 0.8;
+			optionText.scaleY = 0.8;
+			optionText.targetY = i;
 			grpOptions.add(optionText);
 
 			if(optionsArray[i].type == 'bool') {
-				boolText = new FlxText(optionText.x + 220, optionText.y, 0, '', 16, true);
-				boolText.text = optionsArray[i].getValue(true) ? "On" : "Off";
-				boolText.setFormat(Paths.font('stalker1.ttf'), 32, FlxColor.WHITE, FlxTextBorderStyle.OUTLINE, FlxColor.RED, true);
-				boolText.borderSize = 2;
-				boolText.ID = i;
-				boolText.visible = false; // Hide the boolText initially
-				boolTextGroup.add(boolText);
-	
+				optionText.x += 110;
+				optionText.startPosition.x += 110;
+				optionText.snapToPosition();
+				var checkbox:CheckboxThingie = new CheckboxThingie(optionText.x - 105, optionText.y, optionsArray[i].getValue() == true);
+				checkbox.sprTracker = optionText;
+				checkbox.offsetX -= 32;
+				checkbox.offsetY = -120;
+				checkbox.ID = i;
+				checkboxGroup.add(checkbox);
 			} else {
-				valueText = new FlxText(optionText.x + 220, optionText.y, optionText.width, '', 16, true);
-				valueText.text = Std.string(optionsArray[i].getValue());
-				valueText.setFormat(Paths.font('stalker1.ttf'), 32, FlxColor.WHITE, FlxTextBorderStyle.OUTLINE, FlxColor.RED, true);
-				valueText.borderSize = 2;
+				optionText.snapToPosition();
+				var valueText:AttachedText = new AttachedText(Std.string(optionsArray[i].getValue()), optionText.width, -72, true, 0.8);
+				valueText.sprTracker = optionText;
+				valueText.copyAlpha = true;
 				valueText.ID = i;
-				valueText.visible = false; // Hide the valueText on creation
 				grpTexts.add(valueText);
 				optionsArray[i].setChild(valueText);
 			}
 			updateTextFrom(optionsArray[i]);
-			yOffset += 32; // Increment the Y offset by 32 pixels
 		}
 
 		changeSelection();
@@ -183,24 +163,6 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 
 		addVirtualPad(LEFT_FULL, A_B_C);
 		addVirtualPadCamera();
-
-		modifierTablet.animation.finishCallback = function(name:String) {
-			switch (name) {
-				case 'Anim In':
-					modifierTablet.animation.play('Anim Opened');
-					for (optionText in grpOptions.members) {
-						optionText.visible = true;
-					}
-					for (boolText in boolTextGroup.members) {
-						boolText.visible = true;
-					}
-					for (valueText in grpTexts.members) {
-						valueText.visible = true;
-					}
-				case 'Anim Out':
-					close();
-			}
-		};
 	}
 
 	var nextAccept:Int = 5;
@@ -218,17 +180,7 @@ class GameplayChangersSubstate extends MusicBeatSubstate
 		}
 
 		if (controls.BACK) {
-			for (optionText in grpOptions.members) {
-				optionText.visible = false;
-			}
-			for (boolText in boolTextGroup.members) {
-				boolText.visible = false;
-			}
-			for (valueText in grpTexts.members) {
-				valueText.visible = false;
-			}
-			modifierTablet.animation.play('Anim Out');
-
+			close();
 			ClientPrefs.saveSettings();
 			FlxG.sound.play(Paths.sound('cancelMenu'));
 		}
