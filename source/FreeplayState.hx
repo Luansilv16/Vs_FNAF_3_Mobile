@@ -170,7 +170,7 @@ class FreeplayState extends MusicBeatState
 		final buttonCtrl:String = mobile.MobileControls.enabled ? 'C' : 'CTRL';
 		final buttonReset:String = mobile.MobileControls.enabled ? 'Y' : 'RESET';
 
-                addVirtualPad(LEFT_FULL, A_B);
+                addVirtualPad(UP_DOWN, A_B);
 
 		super.create();
 	}
