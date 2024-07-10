@@ -171,7 +171,6 @@ class FreeplayState extends MusicBeatState
 		final buttonReset:String = mobile.MobileControls.enabled ? 'Y' : 'RESET';
 
                 addVirtualPad(LEFT_FULL, A_B);
-		virtualPad.visible = false;
 
 		super.create();
 	}
@@ -247,8 +246,6 @@ class FreeplayState extends MusicBeatState
 		diffEasy.borderSize = 2;
 		diffEasy.visible = false;
 		add(diffEasy);
-
-		virtualPad.visible = true;
 	}
 
 	public function createGroup(songList:Array<String>):FlxTypedGroup<FlxButton> 
