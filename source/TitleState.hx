@@ -63,8 +63,7 @@ class TitleState extends MusicBeatState
 
         var spritePath:String = 'menus/titleMenu/';
 
-	function introVideo()
-	{
+	function introVideo() {
 		#if VIDEOS_ALLOWED
 		var filepath:String = Paths.video('fnaf3start');
 		#if sys
@@ -79,7 +78,7 @@ class TitleState extends MusicBeatState
 
 		videoIntro = new MP4Handler();
 		video.finishCallback = function()
-		
+			
 		#end
 	}
 	
