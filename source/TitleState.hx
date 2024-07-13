@@ -73,14 +73,13 @@ class TitleState extends MusicBeatState
 		if(!OpenFlAssets.exists(filepath))
 		#end
 		{
-			FlxG.log.warn('Couldnt find video file: ' + name);
+			FlxG.log.warn('Couldnt find video file: ' + filepath);
 			return;
 		}
 
 		videoIntro = new MP4Handler();
-		videoIntro.onEndReached.add(videoIntro.dispose);
-		videoIntro.load(filepath);
-			
+		video.finishCallback = function()
+		
 		#end
 	}
 	
@@ -379,7 +378,7 @@ class TitleState extends MusicBeatState
 			{
 				case 1:
 					#if VIDEOS_ALLOWED
-					videoIntro.playVideo(filepath);
+					videoIntro.playVideo('fnaf3start');
 					#end
 					
 					//FlxG.sound.music.stop();
