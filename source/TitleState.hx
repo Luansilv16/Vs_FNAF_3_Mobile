@@ -53,6 +53,7 @@ class TitleState extends MusicBeatState
 	public static var updateVersion:String = '';
 
 	var mustUpdate:Bool = false;
+	var videoIntro:MP4Handler;
 	var titleTextColors:Array<FlxColor> = [0xFFDEFDB2, 0xFFC2FF6B];
 	var titleTextAlphas:Array<Float> = [1, .64];
 
@@ -61,11 +62,34 @@ class TitleState extends MusicBeatState
 	var swagShader:ColorSwap = null;
 
         var spritePath:String = 'menus/titleMenu/';
+
+	function introVideo()
+	{
+		#if VIDEOS_ALLOWED
+		var filepath:String = Paths.video('fnaf3start');
+		#if sys
+		if(!FileSystem.exists(filepath))
+		#else
+		if(!OpenFlAssets.exists(filepath))
+		#end
+		{
+			FlxG.log.warn('Couldnt find video file: ' + name);
+			return;
+		}
+
+		videoIntro = new MP4Handler();
+		videoIntro.onEndReached.add(videoIntro.dispose);
+		videoIntro.load(filepath);
+			
+		#end
+	}
 	
 	override public function create():Void
 	{
 		Paths.clearStoredMemory();
 		Paths.clearUnusedMemory();
+
+		introVideo();
 
 		#if LUA_ALLOWED
 		Paths.pushGlobalMods();
@@ -354,6 +378,10 @@ class TitleState extends MusicBeatState
 			switch (sickBeats)
 			{
 				case 1:
+					#if VIDEOS_ALLOWED
+					videoIntro.playVideo(filepath);
+					#end
+					
 					//FlxG.sound.music.stop();
 					FlxG.sound.playMusic(Paths.music('freakyMenu'), 0);
 					FlxG.sound.music.fadeIn(4, 0, 0.7);
