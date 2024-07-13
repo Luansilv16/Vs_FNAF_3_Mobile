@@ -38,6 +38,10 @@ import flixel.util.FlxTimer;
 import lime.app.Application;
 import openfl.Assets;
 
+#if VIDEOS_ALLOWED
+import vlc.MP4Handler;
+#end
+
 using StringTools;
 
 class TitleState extends MusicBeatState
