@@ -77,8 +77,7 @@ class TitleState extends MusicBeatState
 		}
 
 		videoIntro = new MP4Handler();
-		video.finishCallback = function()
-			
+		video.finishCallback = function();
 		#end
 	}
 	
