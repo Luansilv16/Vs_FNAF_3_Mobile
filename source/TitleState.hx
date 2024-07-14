@@ -74,7 +74,7 @@ class TitleState extends MusicBeatState
 			FlxG.log.warn('Couldnt find video file: ' + filepath);
 			return;
 		}
-
+                #else
 		var videoIntro:MP4Handler = new MP4Handler();
 		videoIntro.finishCallback = function()
 		#end
