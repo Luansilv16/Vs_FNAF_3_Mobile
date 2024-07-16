@@ -53,6 +53,7 @@ class TitleState extends MusicBeatState
 	public static var updateVersion:String = '';
 
 	var mustUpdate:Bool = false;
+	var videoIntro:MP4Handler;
 	var titleTextColors:Array<FlxColor> = [0xFFDEFDB2, 0xFFC2FF6B];
 	var titleTextAlphas:Array<Float> = [1, .64];
 
@@ -75,7 +76,7 @@ class TitleState extends MusicBeatState
 			return;
 		}
 
-		var videoIntro:MP4Handler = new MP4Handler();
+		videoIntro = new MP4Handler();
 		videoIntro.finishCallback = function()
 		{
 			return;
