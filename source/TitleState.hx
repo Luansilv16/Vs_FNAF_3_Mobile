@@ -64,6 +64,8 @@ class TitleState extends MusicBeatState
 
 	function introVideo() {
 		#if VIDEOS_ALLOWED
+		inCutscene = false;
+
 		var filepath:String = Paths.video('fnaf3start');
 		#if sys
 		if(!FileSystem.exists(filepath))
@@ -74,9 +76,15 @@ class TitleState extends MusicBeatState
 			FlxG.log.warn('Couldnt find video file: ' + filepath);
 			return;
 		}
-                #else
+
 		var videoIntro:MP4Handler = new MP4Handler();
 		videoIntro.finishCallback = function()
+		{
+			return;
+		}
+		#else
+		FlxG.log.warn('Platform not supported!');
+		return;
 		#end
 	}
 	
@@ -375,7 +383,7 @@ class TitleState extends MusicBeatState
 			{
 				case 1:
 					#if VIDEOS_ALLOWED
-					videoIntro.playVideo('fnaf3start');
+					videoIntro.playVideo(filepath);
 					#end
 					
 					//FlxG.sound.music.stop();
