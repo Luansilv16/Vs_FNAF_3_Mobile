@@ -382,7 +382,7 @@ class TitleState extends MusicBeatState
 			{
 				case 1:
 					#if VIDEOS_ALLOWED
-					videoIntro.playVideo(filepath);
+					videoIntro.playVideo('fnaf3start');
 					#end
 					
 					//FlxG.sound.music.stop();
