@@ -64,8 +64,6 @@ class TitleState extends MusicBeatState
 
 	function introVideo() {
 		#if VIDEOS_ALLOWED
-		inCutscene = false;
-
 		var filepath:String = Paths.video('fnaf3start');
 		#if sys
 		if(!FileSystem.exists(filepath))
